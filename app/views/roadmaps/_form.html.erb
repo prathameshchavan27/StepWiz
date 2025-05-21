@@ -1,0 +1,31 @@
+<%= form_with(model: roadmap, local: true) do |form| %>
+  <% if roadmap.errors.any? %>
+    <div class="errors">
+      <h2><%= pluralize(roadmap.errors.count, "error") %> prohibited this roadmap from being saved:</h2>
+      <ul>
+        <% roadmap.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %><br>
+    <%= form.text_area :description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :public %><br>
+    <%= form.check_box :public %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
