@@ -1,43 +1,99 @@
 <div class="container mt-5">
-  <div class="card shadow-sm">
+  <div class="card shadow-lg rounded-4 border-0">
     <div class="card-body">
-      <h1 class="card-title mb-4 text-primary">Roadmap</h1>
+      <h1 class="card-title mb-4 text-primary fw-bold">📋 Roadmap Overview</h1>
 
-      <h3 class="mb-2">Title: <span class="text-dark"><%= @roadmap.title %></span></h3>
-      <h5 class="text-muted mb-4">Description: <%= @roadmap.description %></h5>
+      <h3 class="mb-3">🧭 <span class="text-dark"><%= @roadmap.title %></span></h3>
+      <p class="text-muted mb-4"><%= @roadmap.description %></p>
 
       <hr>
 
-      <h4 class="mb-3">Steps</h4>
+      <h4 class="mb-3">🚶 Steps</h4>
       <% if @roadmap.roadmap_steps.any? %>
-        <ol class="list-group list-group-numbered">
+        <div id="steps-list" class="row g-3">
           <% @roadmap.roadmap_steps.order(:position).each do |step| %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <strong>Step <%= step.position %>:</strong> <%= step.title %>
-                <br>
-                <small class="text-muted"><%= step.description %></small>
-                <% if step.resource_link.present? %>
-                  <br>
-                  <a href="<%= step.resource_link %>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">Resource</a>
-                <% end %>
+            <div
+              class="col-12 todo-card p-3 border rounded-3 position-relative"
+              tabindex="0"
+            >
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong>Step <%= step.position %>:</strong> <%= step.title %>
+                  <div class="text-muted"><%= step.description %></div>
+                  <% if step.resource_link.present? %>
+                    <a href="<%= step.resource_link %>"
+                       class="btn btn-sm btn-outline-primary mt-2"
+                       target="_blank">🌐 Resource</a>
+                  <% end %>
+                </div>
+
+                <div class="action-buttons d-flex flex-column">
+                  <%= button_to "⬆️",
+                                move_up_roadmap_step_path(step),
+                                method: :patch,
+                                form_class: "d-inline mb-1",
+                                class: "btn btn-sm btn-outline-secondary" %>
+                  <%= button_to "⬇️",
+                                move_down_roadmap_step_path(step),
+                                method: :patch,
+                                form_class: "d-inline",
+                                class: "btn btn-sm btn-outline-secondary" %>
+                </div>
               </div>
-              <div>
-                <%= link_to "Edit", edit_roadmap_step_path(step), class: "btn btn-sm btn-outline-secondary me-2" %>
-                <%= link_to "Show", roadmap_step_path(step), class: "btn btn-sm btn-outline-primary me-2" %>
-                
-              </div>
-            </li>
+            </div>
           <% end %>
-        </ol>
+        </div>
       <% else %>
-        <p class="text-muted">No steps added yet.</p>
+        <p class="text-muted">No steps added yet. Start building your journey! ✨</p>
       <% end %>
 
       <div class="mt-4">
-        <%= link_to "Add New Step", new_roadmap_step_path(roadmap_id: @roadmap.id), class: "btn btn-primary" %>
-        <%= link_to "Back to Roadmaps", roadmaps_path, class: "btn btn-outline-secondary ms-2" %>
+        <%= link_to "➕ Add New Step",
+                    new_roadmap_step_path(roadmap_id: @roadmap.id),
+                    class: "btn btn-success" %>
+        <%= link_to "⬅️ Back to Roadmaps",
+                    roadmaps_path,
+                    class: "btn btn-outline-secondary ms-2" %>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.todo-card {
+  background-color: #f8f9fa;      // light body background
+  transition: background-color .2s, box-shadow .2s;
+  cursor: pointer;
+  outline: none;                  // we'll handle focus styles ourselves
+  position: relative;
+}
+
+<%# .todo-card:hover, %>
+.todo-card:focus-within {
+  background-color: #e3f2fd;      // soft blue highlight
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Hide action-buttons until hover or focus */
+.todo-card .action-buttons {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+<%# .todo-card:hover .action-buttons, %>
+.todo-card:focus-within .action-buttons {
+  opacity: 1;
+}
+
+/* Ensure the action-buttons sit in top-right */
+.todo-card .action-buttons {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Tweak button sizing if needed */
+.todo-card .action-buttons .btn {
+  min-width: 2.5rem;
+}
+</style>

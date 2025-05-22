@@ -1,27 +1,46 @@
-<h1>Roadmaps</h1>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-5 text-primary fw-bold">📌 Roadmaps</h1>
+    <%= link_to '➕ New Roadmap', new_roadmap_path, class: 'btn btn-lg btn-success' %>
+  </div>
 
-<%= link_to 'New Roadmap', new_roadmap_path, class: 'button' %>
+  <% if @roadmaps.any? { |r| r.public? || r.user == current_user } %>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle shadow-sm rounded">
+        <thead class="table-dark">
+          <tr>
+            <th>📘 Title</th>
+            <th>📝 Description</th>
+            <th class="text-center" colspan="3">⚙️ Actions</th>
+          </tr>
+        </thead>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @roadmaps.each do |roadmap| %>
-      <% if roadmap.public? || roadmap.user==current_user %>
-        <tr>
-            <td><%= roadmap.title %></td>
-            <td><%= truncate(roadmap.description, length: 100) %></td>
-            <td><%= link_to 'Show', roadmap_path(roadmap)  %></td>
-            <td><%= link_to 'Edit', edit_roadmap_path(roadmap)if roadmap.user==current_user  %></td>
-            <td><%= button_to 'Delete', roadmap_path(roadmap), method: :delete, data: { confirm: 'Are you sure?' } if roadmap.user==current_user %></td>
-        </tr>
-      <% end %>
-    <% end %>
-  </tbody>
-</table>
+        <tbody>
+          <% @roadmaps.each do |roadmap| %>
+            <% if roadmap.public? || roadmap.user == current_user %>
+              <tr>
+                <td class="fw-semibold"><%= roadmap.title %></td>
+                <td><%= truncate(roadmap.description, length: 100) %></td>
+                <td>
+                  <%= link_to '👁 Show', roadmap_path(roadmap), class: 'btn btn-sm btn-outline-primary' %>
+                </td>
+                <td>
+                  <% if roadmap.user == current_user %>
+                    <%= link_to '✏️ Edit', edit_roadmap_path(roadmap), class: 'btn btn-sm btn-outline-secondary' %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if roadmap.user == current_user %>
+                    <%= button_to '🗑 Delete', roadmap_path(roadmap), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info">No roadmaps to display yet. Start by creating one! 🎯</div>
+  <% end %>
+</div>

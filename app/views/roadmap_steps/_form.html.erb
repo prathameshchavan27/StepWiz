@@ -1,44 +1,44 @@
-<%= form_with model: @roadmap_step, local: true do |form| %>
-        <% if @roadmap_step.errors.any? %>
-          <div class="alert alert-danger">
-            <h5>There were errors:</h5>
-            <ul>
-              <% @roadmap_step.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
+<%= form_with model: @roadmap_step, local: true, class: "card shadow p-4 mt-5 container" do |form| %>
+  <% if @roadmap_step.errors.any? %>
+    <div class="alert alert-danger">
+      <h5>There were errors:</h5>
+      <ul>
+        <% @roadmap_step.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
         <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-        <%= form.hidden_field :roadmap_id %>
+  <%= form.hidden_field :roadmap_id %>
 
-        <div class="mb-3">
-          <%= form.label :title, class: "form-label" %>
-          <%= form.text_field :title, class: "form-control", placeholder: "e.g., JavaScript Basics" %>
-        </div>
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label fw-semibold" %>
+    <%= form.text_field :title, class: "form-control", placeholder: "e.g., JavaScript Basics" %>
+  </div>
 
-        <div class="mb-3">
-          <%= form.label :description, class: "form-label" %>
-          <%= form.text_area :description, class: "form-control", rows: 4, placeholder: "Brief overview of the step..." %>
-        </div>
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label fw-semibold" %>
+    <%= form.text_area :description, class: "form-control", rows: 4, placeholder: "Brief overview of the step..." %>
+  </div>
 
-        <div class="mb-3">
-          <%= form.label :resource_link, class: "form-label" %>
-          <%= form.text_field :resource_link, class: "form-control", placeholder: "Optional: https://..." %>
-        </div>
+  <div class="mb-3">
+    <%= form.label :resource_link, class: "form-label" %>
+    <%= form.text_field :resource_link, class: "form-control", placeholder: "https://..." %>
+  </div>
 
-        <div class="mb-3">
-          <%= form.label :position, class: "form-label" %>
-          <%= form.number_field :position, class: "form-control", placeholder: "e.g., 1" %>
-        </div>
+  <div class="mb-3">
+    <%= form.label :position, class: "form-label" %>
+    <%= form.number_field :position, class: "form-control", placeholder: "e.g., 1" %>
+  </div>
 
-        <div class="mb-3">
-          <%= form.label :dependency_step_id, "Depends on Step ID (optional)", class: "form-label" %>
-          <%= form.number_field :dependency_step_id, class: "form-control" %>
-        </div>
+  <div class="mb-3">
+    <%= form.label :dependency_step_id, "Depends on Step ID (optional)", class: "form-label" %>
+    <%= form.number_field :dependency_step_id, class: "form-control" %>
+  </div>
 
-        <div class="d-flex gap-2">
-          <%= form.submit "Create Step", class: "btn btn-primary" %>
-          <%= link_to "Back", roadmap_path(@roadmap_step.roadmap_id), class: "btn btn-outline-secondary" %>
-        </div>
-      <% end %>
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-success" %>
+    <%= link_to "⬅️ Back", roadmap_path(@roadmap_step.roadmap_id), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
