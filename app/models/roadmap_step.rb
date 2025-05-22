@@ -5,8 +5,8 @@ class RoadmapStep < ApplicationRecord
     private
 
     def set_position
-    if self.position.nil?
-        self.position = (roadmap.roadmap_steps.maximum(:position) || 0) + 1
-    end
+        if self.position.nil?
+            self.position = (roadmap.roadmap_steps.maximum(:position) || 0) + 1
+        end
     end
 end

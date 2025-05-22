@@ -1,5 +1,5 @@
 class RoadmapStepsController < ApplicationController
-    before_action :set_roadmap_step, only: %i[ show edit update destroy ]
+    before_action :set_roadmap_step, only: %i[ show edit update destroy move_up move_down]
     def index
     end
         
@@ -37,6 +37,45 @@ class RoadmapStepsController < ApplicationController
         @roadmap = @roadmap_step.roadmap
         @roadmap_step.destroy
         redirect_to roadmap_path(@roadmap)
+    end
+
+    def move_up
+        sibling = RoadmapStep.find_by(position: @roadmap_step.position - 1, roadmap_id: @roadmap_step.roadmap_id)
+
+        unless sibling
+            redirect_back fallback_location: roadmap_path(@roadmap_step.roadmap), alert: "Already at the top!"
+            return
+        end
+
+        RoadmapStep.transaction do
+            # Temporarily set current step to an unused position to avoid collision
+            @roadmap_step.update!(position: -1)
+
+            # Move sibling down
+            sibling.update!(position: sibling.position + 1)
+
+            # Move current step up
+            @roadmap_step.update!(position: sibling.position - 1)
+        end
+
+        redirect_back fallback_location: roadmap_path(@roadmap_step.roadmap), notice: "Step moved up!"
+    end
+
+    def move_down
+        sibling = RoadmapStep.find_by(position: @roadmap_step.position + 1, roadmap_id: @roadmap_step.roadmap_id)
+
+        unless sibling
+            redirect_back fallback_location: roadmap_path(@roadmap_step.roadmap), alert: "Already at the bottom!"
+            return
+        end
+
+        RoadmapStep.transaction do
+            @roadmap_step.update!(position: -1)
+            sibling.update!(position: sibling.position - 1)
+            @roadmap_step.update!(position: sibling.position + 1)
+        end
+
+        redirect_back fallback_location: roadmap_path(@roadmap_step.roadmap), notice: "Step moved down!"
     end
 
     private
