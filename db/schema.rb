@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_21_151033) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_22_050940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "roadmap_steps", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "description"
+    t.string "resource_link"
+    t.integer "position"
+    t.bigint "dependency_step_id"
+    t.bigint "roadmap_id", null: false
+    t.index ["dependency_step_id"], name: "index_roadmap_steps_on_dependency_step_id"
+    t.index ["roadmap_id"], name: "index_roadmap_steps_on_roadmap_id"
+  end
 
   create_table "roadmaps", force: :cascade do |t|
     t.string "title"
@@ -41,5 +54,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_21_151033) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "roadmap_steps", "roadmap_steps", column: "dependency_step_id"
+  add_foreign_key "roadmap_steps", "roadmaps"
   add_foreign_key "roadmaps", "users"
 end

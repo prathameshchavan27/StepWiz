@@ -1,4 +1,43 @@
-<h1>Roadmap</h1>
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h1 class="card-title mb-4 text-primary">Roadmap</h1>
 
-<h3>Title: <%= @roadmap.title %></h3>
-<h3>Description: <%= @roadmap.description %></h3>
+      <h3 class="mb-2">Title: <span class="text-dark"><%= @roadmap.title %></span></h3>
+      <h5 class="text-muted mb-4">Description: <%= @roadmap.description %></h5>
+
+      <hr>
+
+      <h4 class="mb-3">Steps</h4>
+      <% if @roadmap.roadmap_steps.any? %>
+        <ol class="list-group list-group-numbered">
+          <% @roadmap.roadmap_steps.order(:position).each do |step| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Step <%= step.position %>:</strong> <%= step.title %>
+                <br>
+                <small class="text-muted"><%= step.description %></small>
+                <% if step.resource_link.present? %>
+                  <br>
+                  <a href="<%= step.resource_link %>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">Resource</a>
+                <% end %>
+              </div>
+              <div>
+                <%= link_to "Edit", edit_roadmap_step_path(step), class: "btn btn-sm btn-outline-secondary me-2" %>
+                <%= link_to "Show", roadmap_step_path(step), class: "btn btn-sm btn-outline-primary me-2" %>
+                
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      <% else %>
+        <p class="text-muted">No steps added yet.</p>
+      <% end %>
+
+      <div class="mt-4">
+        <%= link_to "Add New Step", new_roadmap_step_path(roadmap_id: @roadmap.id), class: "btn btn-primary" %>
+        <%= link_to "Back to Roadmaps", roadmaps_path, class: "btn btn-outline-secondary ms-2" %>
+      </div>
+    </div>
+  </div>
+</div>

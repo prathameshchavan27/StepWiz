@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <div class="card shadow rounded">
+    <div class="card-header bg-primary text-white">
+      <h2>Step <%= @roadmap_step.position %>: <%= @roadmap_step.title %></h2>
+    </div>
+
+    <div class="card-body">
+      <p><strong>Description:</strong></p>
+      <p><%= @roadmap_step.description.presence || "No description provided." %></p>
+
+      <% if @roadmap_step.resource_link.present? %>
+        <p><strong>Resource:</strong>
+          <a href="<%= @roadmap_step.resource_link %>" target="_blank" class="btn btn-outline-info btn-sm">
+            Visit Link
+          </a>
+        </p>
+      <% end %>
+
+      <% if @roadmap_step.dependency_step_id.present? %>
+        <p><strong>Depends on Step:</strong> <%= @roadmap_step.dependency_step_id %></p>
+      <% end %>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between">
+      <%= link_to "Back to Roadmap", roadmap_path(@roadmap_step.roadmap), class: "btn btn-secondary" %>
+      <div>
+        <%= link_to "Edit", edit_roadmap_step_path(@roadmap_step), class: "btn btn-warning me-2" %>
+        <%= button_to "Delete", roadmap_step_path(@roadmap_step),
+                    method: :delete,
+                    data: { confirm: "Are you sure you want to delete this step?" },
+                    class: "btn btn-danger" %>
+      </div>
+    </div>
+  </div>
+</div>
