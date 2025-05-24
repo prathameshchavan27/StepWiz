@@ -10,6 +10,21 @@
 
       <h4 class="mb-3">🚶 Steps</h4>
       <% if @roadmap.roadmap_steps.any? %>
+        <% if @roadmap.user == current_user %>
+            <p>Your progress: </p>
+            <div class="progress">
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    aria-valuenow="<%= @progress %>"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    style="width: <%= @progress %>%;">
+                    <span class="sr-only"><%= @progress %>%</span>
+                </div>
+            </div>
+        <% end %>
+        <br>
         <div id="steps-list" class="row g-3">
             <% @roadmap.roadmap_steps.order(:position).each do |step| %>
                 <div class="col-12 todo-card p-3 border rounded-3 position-relative " tabindex="0">

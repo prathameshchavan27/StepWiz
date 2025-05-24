@@ -7,6 +7,13 @@ class RoadmapsController < ApplicationController
     end
 
     def show
+        total_steps = @roadmap.roadmap_steps.count
+        completed_steps = 0
+        if current_user
+            completed_steps = current_user.step_completions.count 
+            puts completed_steps
+        end
+        @progress = ((completed_steps.to_f/total_steps)*100).round
     end
 
     def new
