@@ -1,7 +1,8 @@
 class RoadmapStep < ApplicationRecord
     belongs_to :roadmap
     before_create :set_position
-
+    has_many :step_completions
+    has_many :completing_users, through: :step_completions, source: :user
     private
 
     def set_position
