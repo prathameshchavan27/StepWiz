@@ -17,9 +17,6 @@ class StepCompletionsController < ApplicationController
         @roadmap_step = RoadmapStep.find(params[:roadmap_step_id])
         @roadmap = @roadmap_step.roadmap
     end
-    
-# select u.name, rs.title  from users u inner join step_completions sc on u.id=sc.user_id inner join roadmap_steps rs on rs.id = sc.roadmap_step_id;
+
+  # select u.name, rs.title  from users u inner join step_completions sc on u.id=sc.user_id inner join roadmap_steps rs on rs.id = sc.roadmap_step_id;
 end
-
-
-  
