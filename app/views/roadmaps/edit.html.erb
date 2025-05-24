@@ -2,4 +2,8 @@
 
 <%= render 'form', roadmap: @roadmap %>
 
+<% @roadmap.roadmap_steps.each do |step| %>
+<%# give steps ui with edit and select %>
+<% end %>    
+
 <%= link_to 'Back', roadmaps_path %>

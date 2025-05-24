@@ -7,30 +7,49 @@
       <p class="text-muted mb-4"><%= @roadmap.description %></p>
 
       <hr>
-
       <h4 class="mb-3">🚶 Steps</h4>
       <% if @roadmap.roadmap_steps.any? %>
+        <% if @roadmap.user == current_user %>
+            <p>Your progress:</p>
+            <div class="progress">
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    aria-valuenow="<%= @progress %>"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    style="width: <%= @progress %>%;">
+                    <span class="sr-only"><%= @progress %>%</span>
+                </div>
+            </div>
+        <% end %>
+        <br>
         <div id="steps-list" class="row g-3">
-            <% @roadmap.roadmap_steps.order(:position).each do |step| %>
-                <div class="col-12 todo-card p-3 border rounded-3 position-relative " tabindex="0">
+        <% @roadmap.roadmap_steps.order(:position).each_with_index do |step, index| %>
+            <% previous_step = step.dependency_step_id if index > 0%>
+            <% locked = current_user && index > 0 && !current_user.completed_steps.exists?(id: previous_step) %>
+            
+            <div class="col-12 todo-card p-3 border rounded-3 position-relative <%= 'opacity-50' if locked %>" tabindex="0" data-url="<%= roadmap_step_path(step) %>" style="cursor:pointer;">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                    <strong>Step <%= step.position %>:</strong> <%= step.title %>
+                    <strong>Step <%= index+1 %>:</strong> <%= step.title %>
                     <div class="text-muted"><%= step.description %></div>
 
                     <% if step.resource_link.present? %>
-                        <a href="<%= step.resource_link %>"
-                        class="btn btn-sm btn-outline-primary mt-2"
-                        target="_blank">🌐 Resource</a>
+                        <a href="<%= step.resource_link %>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">🌐 Resource</a>
                     <% end %>
 
                     <% if @roadmap.user == current_user %>
                         <div class="form-check mt-3">
+                        <% if locked %>
+                            <button class="btn btn-sm btn-outline-secondary" disabled title="Complete the previous step first">🔒 Locked</button>
+                        <% else %>
                             <% if current_user.completed_steps.include?(step) %>
-                                <%= button_to "✅ Mark Incomplete", roadmap_step_step_completion_path(step, current_user.step_completions.find_by(roadmap_step: step)), method: :delete, class: "btn btn-sm btn-outline-danger" %>
+                            <%= button_to "✅ Mark Incomplete", roadmap_step_step_completion_path(step, current_user.step_completions.find_by(roadmap_step: step)), method: :delete, class: "btn btn-sm btn-outline-danger" %>
                             <% else %>
-                                <%= button_to "⬜ Mark Complete", roadmap_step_step_completions_path(step), method: :post, class: "btn btn-sm btn-outline-success" %>
+                            <%= button_to "⬜ Mark Complete", roadmap_step_step_completions_path(step), method: :post, class: "btn btn-sm btn-outline-success" %>
                             <% end %>
+                        <% end %>
                         </div>
                     <% end %>
                     </div>
@@ -39,11 +58,13 @@
                     <% if @roadmap.user == current_user %>
                         <%= button_to "⬆️", move_up_roadmap_step_path(step), method: :patch, form_class: "d-inline mb-1", class: "btn btn-sm btn-outline-secondary" %>
                         <%= button_to "⬇️", move_down_roadmap_step_path(step), method: :patch, form_class: "d-inline", class: "btn btn-sm btn-outline-secondary" %>
+                        <%= link_to "View Step", roadmap_step_path(step),class: "btn btn-sm btn-outline-primary" %>
                     <% end %>
                     </div>
                 </div>
-                </div>
-            <% end %>
+            </div>
+            
+        <% end %>
         </div>
       <% else %>
         <p class="text-muted">No steps added yet. Start building your journey! ✨</p>
