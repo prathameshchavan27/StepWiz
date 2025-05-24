@@ -10,7 +10,7 @@ class RoadmapsController < ApplicationController
         total_steps = @roadmap.roadmap_steps.count
         completed_steps = 0
         if current_user
-            completed_steps = current_user.step_completions.count 
+            completed_steps = current_user.step_completions.count
             puts completed_steps
         end
         @progress = ((completed_steps.to_f/total_steps)*100).round
@@ -30,7 +30,7 @@ class RoadmapsController < ApplicationController
             render :new, status: :unprocessable_entity
         end
     end
-    
+
     def edit
     end
 
@@ -51,7 +51,7 @@ class RoadmapsController < ApplicationController
     private
 
     def roadmap_params
-        params.require(:roadmap).permit(:title,:description,:public)
+        params.require(:roadmap).permit(:title, :description, :public)
     end
 
     def set_roadmap

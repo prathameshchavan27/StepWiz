@@ -6,7 +6,6 @@ class CreateStepCompletions < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    add_index :step_completions, [:user_id, :roadmap_step_id], unique: true
+    add_index :step_completions, [ :user_id, :roadmap_step_id ], unique: true
   end
-
 end

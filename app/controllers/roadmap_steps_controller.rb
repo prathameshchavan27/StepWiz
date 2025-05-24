@@ -2,12 +2,12 @@ class RoadmapStepsController < ApplicationController
     before_action :set_roadmap_step, only: %i[ show edit update destroy move_up move_down]
     def index
     end
-        
+
     def new
         @roadmap = Roadmap.find(params[:roadmap_id])
         @roadmap_step = @roadmap.roadmap_steps.build
     end
-    
+
     def create
         @roadmap = Roadmap.find(params[:roadmap_step][:roadmap_id])
         @roadmap_step = @roadmap.roadmap_steps.build(roadmap_step_params)
@@ -18,7 +18,7 @@ class RoadmapStepsController < ApplicationController
             render :new, status: :unprocessable_entity
         end
     end
-    
+
     def show
     end
 
@@ -84,6 +84,6 @@ class RoadmapStepsController < ApplicationController
     end
 
     def roadmap_step_params
-        params.require(:roadmap_step).permit(:title,:description,:resource_link,:position,:dependency_step_id)
+        params.require(:roadmap_step).permit(:title, :description, :resource_link, :position, :dependency_step_id)
     end
 end
