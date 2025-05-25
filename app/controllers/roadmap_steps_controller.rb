@@ -20,6 +20,7 @@ class RoadmapStepsController < ApplicationController
     end
 
     def show
+        @user_sessions_count = current_user.focus_sessions.where(roadmap_step: @roadmap_step).count
     end
 
     def edit
