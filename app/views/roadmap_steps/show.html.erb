@@ -19,7 +19,9 @@
         <p><strong>Depends on Step:</strong> Step ID <%= @roadmap_step.dependency_step_id %></p>
       <% end %>
     </div>
-
+    <p class="mt-3">
+    🍅 You’ve completed <strong><%= @user_sessions_count %></strong> Pomodoro session<%= 's' if @user_sessions_count != 1 %> on this step.
+    </p>
     <div class="card-footer d-flex justify-content-between">
       <%= link_to "⬅️ Back to Roadmap", roadmap_path(@roadmap_step.roadmap), class: "btn btn-secondary" %>
       <div>
@@ -28,4 +30,88 @@
       </div>
     </div>
   </div>
+    <div class="mt-5">
+        <h4>⏱️ Focus Timer (Pomodoro)</h4>
+        <div id="pomodoro-timer" class="border p-4 rounded-3 bg-light text-center">
+            <h2 id="timer-display" class="display-4 mb-3">25:00</h2>
+
+            <button id="start-btn" class="btn btn-success">▶️ Start Focus Session</button>
+            <button id="reset-btn" class="btn btn-outline-secondary ms-2" disabled>🔄 Reset</button>
+
+            <div id="session-complete-form" class="mt-3" style="display: none;">
+            <%= form_with url: focus_sessions_path, method: :post, local: true, id: "focus-session-form" do |f| %>
+                <%= hidden_field_tag "focus_session[roadmap_step_id]", @roadmap_step.id %>
+                <%= hidden_field_tag "focus_session[duration]", 25 %>
+                <%= hidden_field_tag "focus_session[completed_at]", "", id: "completed-at-field" %>
+                <%= f.submit "✅ Done", class: "btn btn-outline-success" %>
+            <% end %>
+            </div>
+            <p id="timer-status" class="mt-3 text-muted"></p>
+        </div>
+    </div>
 </div>
+
+<script>
+  let timer;
+  let isRunning = false;
+  let remainingTime = 0.5 * 60;
+
+  const display = document.getElementById("timer-display");
+  const startBtn = document.getElementById("start-btn");
+  const resetBtn = document.getElementById("reset-btn");
+  const statusText = document.getElementById("timer-status");
+  const completedAtField = document.getElementById("completed-at-field");
+  const sessionForm = document.getElementById("session-complete-form");
+
+  function updateDisplay() {
+    const minutes = Math.floor(remainingTime / 60).toString().padStart(2, "0");
+    const seconds = (remainingTime % 60).toString().padStart(2, "0");
+    display.textContent = `${minutes}:${seconds}`;
+  }
+
+  function startTimer() {
+    if (isRunning) return;
+
+    isRunning = true;
+    statusText.textContent = "Focus session in progress...";
+    startBtn.disabled = true;
+    resetBtn.disabled = false;
+
+    timer = setInterval(() => {
+      if (remainingTime > 0) {
+        remainingTime--;
+        updateDisplay();
+      } else {
+        clearInterval(timer);
+        isRunning = false;
+
+        const now = new Date().toISOString();
+        completedAtField.value = now;
+
+        statusText.textContent = "🎉 Session complete! Take a 5-minute break.";
+        sessionForm.style.display = "block";
+        startBtn.style.display = "none";
+        resetBtn.disabled = true;
+      }
+    }, 1000);
+  }
+
+  function resetTimer() {
+    clearInterval(timer);
+    remainingTime = 25 * 60;
+    updateDisplay();
+    statusText.textContent = "";
+    startBtn.disabled = false;
+    startBtn.style.display = "inline-block";
+    sessionForm.style.display = "none";
+    isRunning = false;
+    resetBtn.disabled = true;
+  }
+
+  startBtn.addEventListener("click", startTimer);
+  resetBtn.addEventListener("click", resetTimer);
+
+  updateDisplay(); // Initial setup
+</script>
+
+

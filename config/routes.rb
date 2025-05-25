@@ -6,5 +6,6 @@ Rails.application.routes.draw do
     patch :move_down, on: :member
     resources :step_completions, only: [ :create, :destroy ]
   end
+  resources :focus_sessions
   root "roadmaps#index"
 end
