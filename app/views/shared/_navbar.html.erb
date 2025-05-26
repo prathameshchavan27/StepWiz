@@ -30,6 +30,10 @@
           <li class="nav-item">
             <%= link_to "✏️ Edit Profile", edit_user_registration_path, class: "nav-link text-primary" %>
           </li>
+           <li class="nav-item">
+                <%= link_to "👤 Profile", profile_path(current_user), class: "nav-link" %>
+           </li>
+
           <li class="nav-item">
             <%= button_to "🚪 Logout", destroy_user_session_path, method: :delete, class: "btn btn-outline-danger ms-2", form_class: "d-inline" %>
           </li>

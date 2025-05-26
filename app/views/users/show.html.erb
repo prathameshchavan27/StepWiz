@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <div class="card shadow border-0 rounded-4">
+    <div class="card-header bg-primary text-white fw-bold">
+      👤 <%= @user.name || @user.email %>
+    </div>
+
+    <div class="card-body">
+      <p><strong>Email:</strong> <%= @user.email %></p>
+      <p><strong>XP:</strong> <%= @user.xp || 0 %></p>
+
+      <%# You can also show completed steps, focus sessions, etc. %>
+      <p><strong>Completed Steps:</strong> <%= @user.step_completions.count %></p>
+      <p><strong>Focus Sessions:</strong> <%= @user.focus_sessions.count %></p>
+    </div>
+  </div>
+</div>
