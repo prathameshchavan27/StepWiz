@@ -1,16 +1,45 @@
-<div class="container mt-4">
-  <div class="card shadow border-0 rounded-4">
-    <div class="card-header bg-primary text-white fw-bold">
-      👤 <%= @user.name || @user.email %>
+<div class="container mt-5">
+  <div class="card border-0 rounded-4 shadow-lg overflow-hidden">
+    <div class="card-header bg-gradient bg-primary text-white p-4">
+      <h4 class="mb-0">
+        👤 <%= @user.name.present? ? @user.name : @user.email %>
+      </h4>
     </div>
 
-    <div class="card-body">
-      <p><strong>Email:</strong> <%= @user.email %></p>
-      <p><strong>XP:</strong> <%= @user.xp || 0 %></p>
+    <div class="card-body bg-light p-4">
+      <div class="row gy-3">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-envelope-fill me-2 text-primary"></i>
+            <strong>Email:</strong>
+            <span class="ms-2"><%= @user.email %></span>
+          </div>
+        </div>
 
-      <%# You can also show completed steps, focus sessions, etc. %>
-      <p><strong>Completed Steps:</strong> <%= @user.step_completions.count %></p>
-      <p><strong>Focus Sessions:</strong> <%= @user.focus_sessions.count %></p>
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-star-fill me-2 text-warning"></i>
+            <strong>XP:</strong>
+            <span class="ms-2"><%= @user.xp || 0 %></span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-check2-square me-2 text-success"></i>
+            <strong>Completed Steps:</strong>
+            <span class="ms-2"><%= @user.step_completions.count %></span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-clock-history me-2 text-info"></i>
+            <strong>Focus Sessions:</strong>
+            <span class="ms-2"><%= @user.focus_sessions.count %></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

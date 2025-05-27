@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get "users/show"
-  resources :roadmaps
+  resources :roadmaps do
+    post 'copy', on: :member
+  end
   devise_for :users
   get 'profile', to: 'users#profile'
   resources :roadmap_steps do
