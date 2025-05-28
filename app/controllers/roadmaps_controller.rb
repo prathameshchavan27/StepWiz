@@ -1,5 +1,5 @@
 class RoadmapsController < ApplicationController
-    before_action :authenticate_user!, only: %i[ new create edit update destroy]
+    before_action :authenticate_user!, only: %i[ new create edit update destroy copy ]
     before_action :set_roadmap, only: %i[ show edit update destroy]
 
     def index
@@ -47,6 +47,31 @@ class RoadmapsController < ApplicationController
         @roadmap.destroy
         redirect_to roadmaps_path
     end
+
+    def copy
+        original = Roadmap.find(params[:id])
+        copy = original.dup
+        copy.user = current_user
+        copy.title += " (Copy)"
+        copy.public = false
+
+        if copy.save
+            # Copy steps
+            original.roadmap_steps.each do |step|
+            copy.roadmap_steps.create(
+                title: step.title,
+                description: step.description,
+                resource_link: step.resource_link,
+                position: step.position
+            )
+            end
+
+            redirect_to roadmap_path(copy), notice: "✅ Roadmap copied successfully!"
+        else
+            redirect_back fallback_location: roadmaps_path, alert: "❌ Could not copy roadmap."
+        end
+    end
+
 
     private
 

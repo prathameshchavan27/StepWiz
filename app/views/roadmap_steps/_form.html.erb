@@ -22,10 +22,20 @@
     <%= form.text_area :description, class: "form-control", rows: 4, placeholder: "Brief overview of the step..." %>
   </div>
 
-  <div class="mb-3">
-    <%= form.label :resource_link, class: "form-label" %>
-    <%= form.text_field :resource_link, class: "form-control", placeholder: "https://..." %>
-  </div>
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Resources</label>
+        <div id="resources-container">
+            <%= form.fields_for :step_resources do |resource_fields| %>
+            <div class="d-flex align-items-center mb-2">
+                <%= resource_fields.text_field :url, class: "form-control", placeholder: "https://..." %>
+                <%= link_to "🗑", "#", class: "btn btn-sm btn-danger ms-2 remove-resource" %>
+                <%= resource_fields.hidden_field :_destroy %>
+            </div>
+            <% end %>
+        </div>
+        <button type="button" id="add-resource" class="btn btn-outline-primary mt-2">➕ Add another resource</button>
+    </div>
+
 
   <div class="mb-3">
     <%= form.label :position, class: "form-label" %>
@@ -41,4 +51,40 @@
     <%= form.submit class: "btn btn-success" %>
     <%= link_to "⬅️ Back", roadmap_path(@roadmap_step.roadmap_id), class: "btn btn-outline-secondary" %>
   </div>
+  <%# </div> %>
 <% end %>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const addBtn = document.getElementById("add-resource");
+  const resourcesContainer = document.getElementById("resources-container");
+
+  addBtn.addEventListener("click", () => {
+    const index = Date.now(); // Unique ID
+    const newField = document.createElement("div");
+    newField.classList.add("d-flex", "align-items-center", "mb-2");
+
+    newField.innerHTML = `
+      <input type="text" name="roadmap_step[step_resources_attributes][${index}][url]" class="form-control" placeholder="https://..." />
+      <input type="hidden" name="roadmap_step[step_resources_attributes][${index}][_destroy]" value="false" />
+      <button type="button" class="btn btn-sm btn-danger ms-2 remove-resource">🗑</button>
+    `;
+
+    resourcesContainer.appendChild(newField); // ✅ Fix: use appendChild
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-resource")) {
+      const container = e.target.closest("div");
+      const destroyField = container.querySelector('input[name*="_destroy"]');
+      if (destroyField) {
+        destroyField.value = "1";
+        container.style.display = "none";
+      } else {
+        container.remove(); // For unsaved fields
+      }
+    }
+  });
+});
+
+</script>
+

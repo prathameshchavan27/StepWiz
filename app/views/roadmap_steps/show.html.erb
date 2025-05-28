@@ -1,60 +1,75 @@
-<div class="container mt-4">
-  <div class="card shadow border-0 rounded-4">
-    <div class="card-header bg-primary text-white fw-bold">
-      Step <%= @roadmap_step.position %>: <%= @roadmap_step.title %>
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-primary text-white fw-bold fs-5 d-flex justify-content-between align-items-center">
+      <span>📘 Step <%= @roadmap_step.position %>: <%= @roadmap_step.title %></span>
+      
     </div>
 
     <div class="card-body">
       <p><strong>Description:</strong> <%= @roadmap_step.description.presence || "No description provided." %></p>
 
-      <% if @roadmap_step.resource_link.present? %>
-        <p><strong>Resource:</strong>
-          <a href="<%= @roadmap_step.resource_link %>" target="_blank" class="btn btn-sm btn-outline-info">
-            Visit Link
-          </a>
-        </p>
-      <% end %>
+        <% if @roadmap_step.step_resources.any? %>
+            <p><strong>Resources:</strong></p>
+            <ul class="list-unstyled">
+                <% @roadmap_step.step_resources.each do |resource| %>
+                <li>
+                    <a href="<%= resource.url %>" target="_blank" class="btn btn-sm btn-outline-info mb-1">
+                    🔗 <%= URI.parse(resource.url).host rescue resource.url %>
+                    </a>
+                </li>
+                <% end %>
+            </ul>
+        <% end %>
+
 
       <% if @roadmap_step.dependency_step_id.present? %>
-        <p><strong>Depends on Step:</strong> Step ID <%= @roadmap_step.dependency_step_id %></p>
+        <p><strong>Depends on:</strong> Step ID <%= @roadmap_step.dependency_step_id %></p>
       <% end %>
+
+      <p class="mt-4 text-muted">
+        🍅 You've completed <strong><%= @user_sessions_count %></strong> Pomodoro session<%= 's' if @user_sessions_count != 1 %> for this step.
+      </p>
     </div>
-    <p class="mt-3">
-    🍅 You’ve completed <strong><%= @user_sessions_count %></strong> Pomodoro session<%= 's' if @user_sessions_count != 1 %> on this step.
-    </p>
-    <div class="card-footer d-flex justify-content-between">
-      <%= link_to "⬅️ Back to Roadmap", roadmap_path(@roadmap_step.roadmap), class: "btn btn-secondary" %>
-      <div>
-        <%= link_to "✏️ Edit", edit_roadmap_step_path(@roadmap_step), class: "btn btn-outline-warning me-2" %>
-        <%= button_to "🗑 Delete", roadmap_step_path(@roadmap_step), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+
+   <div class="card-footer bg-light d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+  <%= link_to "⬅️ Back to Roadmap", roadmap_path(@roadmap_step.roadmap), class: "btn btn-secondary w-100 w-md-auto" %>
+
+  <div class="d-flex flex-column flex-sm-row gap-2">
+    <%= link_to "✏️ Edit", edit_roadmap_step_path(@roadmap_step), class: "btn btn-outline-warning" %>
+    <%= button_to "🗑 Delete", roadmap_step_path(@roadmap_step), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+</div>
+
+  </div>
+
+  <div class="mt-5">
+    <h4 class="text-primary fw-bold mb-3">⏱️ Focus Timer (Pomodoro)</h4>
+    <div id="pomodoro-timer" class="border border-primary border-2 p-4 rounded-4 bg-light text-center shadow-sm">
+      <h2 id="timer-display" class="display-3 fw-bold text-danger mb-3">25:00</h2>
+
+      <div class="mb-3">
+        <button id="start-btn" class="btn btn-success btn-lg shadow-sm">▶️ Start Focus Session</button>
+        <button id="reset-btn" class="btn btn-outline-secondary btn-lg ms-2 shadow-sm" disabled>🔄 Reset</button>
       </div>
+
+      <div id="session-complete-form" style="display: none;" class="mt-3">
+        <%= form_with url: focus_sessions_path, method: :post, local: true, id: "focus-session-form" do |f| %>
+          <%= hidden_field_tag "focus_session[roadmap_step_id]", @roadmap_step.id %>
+          <%= hidden_field_tag "focus_session[duration]", 25 %>
+          <%= hidden_field_tag "focus_session[completed_at]", "", id: "completed-at-field" %>
+          <%= f.submit "✅ Mark as Done", class: "btn btn-outline-success btn-lg mt-2" %>
+        <% end %>
+      </div>
+
+      <p id="timer-status" class="mt-4 text-muted fst-italic"></p>
     </div>
   </div>
-    <div class="mt-5">
-        <h4>⏱️ Focus Timer (Pomodoro)</h4>
-        <div id="pomodoro-timer" class="border p-4 rounded-3 bg-light text-center">
-            <h2 id="timer-display" class="display-4 mb-3">25:00</h2>
-
-            <button id="start-btn" class="btn btn-success">▶️ Start Focus Session</button>
-            <button id="reset-btn" class="btn btn-outline-secondary ms-2" disabled>🔄 Reset</button>
-
-            <div id="session-complete-form" class="mt-3" style="display: none;">
-            <%= form_with url: focus_sessions_path, method: :post, local: true, id: "focus-session-form" do |f| %>
-                <%= hidden_field_tag "focus_session[roadmap_step_id]", @roadmap_step.id %>
-                <%= hidden_field_tag "focus_session[duration]", 25 %>
-                <%= hidden_field_tag "focus_session[completed_at]", "", id: "completed-at-field" %>
-                <%= f.submit "✅ Done", class: "btn btn-outline-success" %>
-            <% end %>
-            </div>
-            <p id="timer-status" class="mt-3 text-muted"></p>
-        </div>
-    </div>
 </div>
 
 <script>
   let timer;
   let isRunning = false;
-  let remainingTime = 0.5 * 60;
+  let remainingTime = 25 * 60;
 
   const display = document.getElementById("timer-display");
   const startBtn = document.getElementById("start-btn");
@@ -73,7 +88,7 @@
     if (isRunning) return;
 
     isRunning = true;
-    statusText.textContent = "Focus session in progress...";
+    statusText.textContent = "⏳ Focus session in progress...";
     startBtn.disabled = true;
     resetBtn.disabled = false;
 
@@ -88,7 +103,7 @@
         const now = new Date().toISOString();
         completedAtField.value = now;
 
-        statusText.textContent = "🎉 Session complete! Take a 5-minute break.";
+        statusText.textContent = "🎉 Great job! Session complete. Take a 5-minute break.";
         sessionForm.style.display = "block";
         startBtn.style.display = "none";
         resetBtn.disabled = true;
@@ -113,5 +128,3 @@
 
   updateDisplay(); // Initial setup
 </script>
-
-
