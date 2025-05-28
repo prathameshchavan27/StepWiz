@@ -1,6 +1,5 @@
 class FocusSessionsController < ApplicationController
-    
-    def new 
+    def new
         @focus_session = FocusSession.new
     end
     def create
@@ -19,6 +18,6 @@ class FocusSessionsController < ApplicationController
     private
 
     def focus_session_params
-        params.require(:focus_session).permit(:roadmap_step_id, :duration,:completed_at)
+        params.require(:focus_session).permit(:roadmap_step_id, :duration, :completed_at)
     end
 end

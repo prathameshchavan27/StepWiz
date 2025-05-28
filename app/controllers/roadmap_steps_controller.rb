@@ -87,7 +87,7 @@ class RoadmapStepsController < ApplicationController
     def roadmap_step_params
         params.require(:roadmap_step).permit(
             :title, :description, :position, :roadmap_id, :dependency_step_id,
-            step_resources_attributes: [:id, :url, :_destroy]
+            step_resources_attributes: [ :id, :url, :_destroy ]
         )
     end
 end
