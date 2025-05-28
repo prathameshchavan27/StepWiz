@@ -35,8 +35,8 @@
                     <strong>Step <%= index+1 %>:</strong> <%= step.title %>
                     <div class="text-muted"><%= step.description %></div>
 
-                    <% if step.resource_link.present? %>
-                        <a href="<%= step.resource_link %>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">🌐 Resource</a>
+                    <% step.step_resources.each do |resource| %>
+                        <a href="<%= resource.url %>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">🌐 <%= URI.parse(resource.url).host rescue resource.url %></a>
                     <% end %>
 
                     <% if @roadmap.user == current_user %>
