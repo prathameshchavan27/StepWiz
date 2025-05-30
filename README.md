@@ -122,7 +122,7 @@ This project is licensed under the **MIT License**.
 
 **Prathamesh**
 
-- [LinkedIn](https://www.linkedin.com/in/prathameshchavan27)
+- [LinkedIn](https://www.linkedin.com/in/prathameshlchavan27)
 - [Portfolio](https://yourportfolio.com)
 
 ---
